@@ -3,9 +3,9 @@
 from setuptools import setup
 
 setup(
-    name='AskFIT',
+    name='askbot-openshift',
     version='1.0',
-    description='FIT Stack Overflow',
+    description='Askbot running on OpenShift',
     author='Miro Hroncok',
     author_email='miro@hroncok.cz',
     url='https://github.com/hroncok/askfit',
