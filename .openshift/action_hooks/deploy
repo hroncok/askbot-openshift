@@ -6,6 +6,9 @@
 
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 
+mkdir -p ${OPENSHIFT_DATA_DIR}upfiles 2>/dev/null || :
+mkdir -p ${OPENSHIFT_DATA_DIR}log 2>/dev/null || :
+
 ln -sf ${OPENSHIFT_DATA_DIR}upfiles ${OPENSHIFT_REPO_DIR}wsgi/static/upfiles
 ln -sf ${OPENSHIFT_DATA_DIR}log ${OPENSHIFT_REPO_DIR}wsgi/openshift/log
 
