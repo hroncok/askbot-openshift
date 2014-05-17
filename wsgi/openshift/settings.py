@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 ## Django settings for ASKBOT enabled project.
-import os.path
 import logging
 import sys
 import askbot
 import site
+import imp
+import os
 
 # a setting to determine whether we are running on OpenShift
 ON_OPENSHIFT = 'OPENSHIFT_REPO_DIR' in os.environ
@@ -79,23 +80,33 @@ MEDIA_URL = '/upfiles/'#url to uploaded media
 STATIC_URL = '/static/'#url to project static files
 
 PROJECT_ROOT = os.path.dirname(__file__)
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')#path to files collected by collectstatic
+STATIC_ROOT = os.path.join(PROJECT_ROOT, '..', 'static')#path to files collected by collectstatic
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'#must be this value
 
-# Make up some unique string, and don't share it with anybody.
-SECRET_KEY = 'sdljdfjkldsflsdjkhsjkldgjlsdgfs s '
+# Make a dictionary of default keys
+default_keys = {'SECRET_KEY': 'vm4rl5*ymb@2&d_(gc$gb-^twq9w(u69hi--%$5xrh!xk(t%hw'}
+
+# Replace default keys with dynamic values if we are in OpenShift
+use_keys = default_keys
+if ON_OPENSHIFT:
+    imp.find_module('openshiftlibs')
+    import openshiftlibs
+    use_keys = openshiftlibs.openshift_secure(default_keys)
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = use_keys['SECRET_KEY']
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
+    'askbot.skins.loaders.Loader',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     #below is askbot stuff for this tuple
     #'askbot.skins.loaders.load_template_source', #changed due to bug 97
-    'askbot.skins.loaders.filesystem_load_template_source',
     #'django.template.loaders.eggs.load_template_source',
 )
 
@@ -195,6 +206,7 @@ INSTALLED_APPS = (
     #'avatar',#experimental use git clone git://github.com/ericflo/django-avatar.git$
 
     'compressor',
+    'group_messaging',
 )
 
 

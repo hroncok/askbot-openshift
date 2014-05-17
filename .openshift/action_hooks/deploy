@@ -6,18 +6,14 @@
 
 source $OPENSHIFT_HOMEDIR/python/virtenv/bin/activate
 
-echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/manage.py collectstatic --noinput'"
-python "$OPENSHIFT_REPO_DIR"wsgi/manage.py collectstatic --noinput -v0
+ln -sf ${OPENSHIFT_DATA_DIR}upfiles ${OPENSHIFT_REPO_DIR}wsgi/static/upfiles
+ln -sf ${OPENSHIFT_DATA_DIR}log ${OPENSHIFT_REPO_DIR}wsgi/openshift/log
 
-echo "Copying migrations to  app-root storage"
-cp -r "${OPENSHIFT_DATA_DIR}migrations" ${OPENSHIFT_REPO_DIR}wsgi/dapi
-python "$OPENSHIFT_REPO_DIR"wsgi/manage.py schemamigration dapi --auto
- 
-echo "Executing 'python $OPENSHIFT_REPO_DIR/wsgi/manage.py migrate dapi'"
-python "$OPENSHIFT_REPO_DIR"wsgi/manage.py migrate dapi
- 
- 
-echo "Saving migrations to persistent storage"
-cp -r "${OPENSHIFT_REPO_DIR}wsgi/dapi/migrations" ${OPENSHIFT_DATA_DIR}
+echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/manage.py collectstatic --noinput'"
+python ${OPENSHIFT_REPO_DIR}wsgi/manage.py collectstatic --noinput -v0
 
-ln -sf $OPENSHIFT_DATA_DIR/upfiles $OPENSHIFT_REPO_DIR/wsgi/static/upfiles
+echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/manage.py syncdb'"
+python ${OPENSHIFT_REPO_DIR}wsgi/manage.py syncdb
+
+echo "Executing 'python ${OPENSHIFT_REPO_DIR}wsgi/manage.py migrate'"
+python ${OPENSHIFT_REPO_DIR}wsgi/manage.py migrate
