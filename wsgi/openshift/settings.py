@@ -209,18 +209,30 @@ INSTALLED_APPS = (
     'group_messaging',
 )
 
+if ON_OPENSHIFT:
+    CACHE_BACKEND = 'redis_cache.cache://' + os.environ['OPENSHIFT_REDIS_HOST'] + ':' + os.environ['OPENSHIFT_REDIS_PORT']
+    CACHE_TIMEOUT = 6000
+    LIVESETTINGS_CACHE_TIMEOUT = CACHE_TIMEOUT
+    CACHE_PREFIX = 'askbot' #make this unique
+    CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
-#setup memcached for production use!
-#see http://docs.djangoproject.com/en/1.1/topics/cache/ for details
-CACHE_BACKEND = 'locmem://'
-#needed for django-keyedcache
-CACHE_TIMEOUT = 6000
-#sets a special timeout for livesettings if you want to make them different
-LIVESETTINGS_CACHE_TIMEOUT = CACHE_TIMEOUT
-CACHE_PREFIX = 'askbot' #make this unique
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
-#If you use memcache you may want to uncomment the following line to enable memcached based sessions
-#SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': os.environ['OPENSHIFT_REDIS_HOST'] + ':' + os.environ['OPENSHIFT_REDIS_PORT'],
+            'KEY_PREFIX': CACHE_PREFIX,
+            'OPTIONS': {
+                'DB': 1,
+                'PASSWORD': os.environ['REDIS_PASSWORD'],
+                'PARSER_CLASS': 'redis.connection.HiredisParser',
+                'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+                'CONNECTION_POOL_CLASS_KWARGS': {
+                    'max_connections': 50,
+                    'timeout': 20,
+                }
+            },
+        },
+    }
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

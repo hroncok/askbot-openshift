@@ -15,5 +15,7 @@ setup(
         'psycopg2',
         'askbot',
         'django-rosetta',
+        'django-redis-cache',
+        'hiredis',
     ]
 )
