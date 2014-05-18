@@ -20,7 +20,7 @@ else:
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Miro Hroncok', 'mhroncok@redhat.com'),
+    ('Miro Hroncok', 'miroslav.hroncok@fit.cvut.cz'),
 )
 MANAGERS = ADMINS
 
