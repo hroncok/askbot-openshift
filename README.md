@@ -14,4 +14,5 @@ How-to
  5. Create user account on your site (first account is the admin account)
  6. Via Django admin, create a new site
  7. (Optionally, for security) Disable Django admin in `wsgi/openshift/settings.py`
- 8. Profit
+ 8. (Optionally, for LaTeX) scp mathjax to `${OPENSHIFT_DATA_DIR}`
+ 9. Profit
